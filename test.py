@@ -9,6 +9,13 @@ my_bot = ChatBot(
                     "chatterbot.logic.BestMatch"]
     )
 
+weather_talk = [
+    "Can you please get me the current weather?",
+    "Sure, which location would you like?",
+    "Can I please see the weather forecast?",
+    "Sure, would you like the current weather or a 7 day forecast?"
+]
+
 small_talk = [
     "Hello",
     "Hi there!",
@@ -31,10 +38,16 @@ math_talk_2 = [
 
 list_trainer = ListTrainer(my_bot)
 
-for item in (small_talk, math_talk_1, math_talk_2):
+for item in (small_talk, math_talk_1, math_talk_2, weather_talk):
     list_trainer.train(item)
 
 corpus_trainer = ChatterBotCorpusTrainer(my_bot)
 corpus_trainer.train('chatterbot.corpus.english')
 
-print(my_bot.get_response("I am good, how are you?"))
+while True:
+    try:
+        user_input = input("You:" )
+        bot_response = my_bot.get_response(user_input)
+        print(f'{my_bot.name}: {bot_response}')
+    except (KeyboardInterrupt, EOFError, SystemExit):
+        break
