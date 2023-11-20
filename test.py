@@ -63,13 +63,28 @@ def index():
         user_input = request.form.get('user_input')
         bot_response = my_bot.get_response(user_input).text
 
-        if bot_response == 'No problem I will retrieve that data now':
-            session['location'] = 'Bristol'
-            session['conversation'].extend([user_input, bot_response])
-            session['conversation'] = session['conversation']
-            return redirect(url_for('display_weather'))
+        if len(session['conversation']) >= 1 and session['conversation'][-1][-5:-1] == "comm":
+            session['location'] = {}
+            location_input = user_input.split(",")
+            trimmed_locations = [item.strip().title() for item in location_input]
+            print(trimmed_locations)
+            for loc in trimmed_locations:
+                if loc not in itinerary_destinations:
+                    print('entering error if block')
+                    bot_response = my_bot.get_response("location invalid").text
+                    break
+                else:
+                #gives feedback to user if a location is incorrect
+                    for i, item in enumerate(trimmed_locations):
+                        session['location'][str(index)] = [item]
+                    bot_response = my_bot.get_response("user entered locations").text
+                    # done to ensure a response no matter the input
 
-
+        # if bot_response == 'No problem I will retrieve that data now':
+        #     session['location'] = 'Bristol'
+        #     session['conversation'].extend([user_input, bot_response])
+        #     session['conversation'] = session['conversation']
+        #     return redirect(url_for('display_weather'))
 
         session['conversation'].extend([user_input, bot_response])
         session['conversation'] = session['conversation']
@@ -79,7 +94,6 @@ def index():
 @app.route('/get_weather',methods=['get','post'])
 def display_weather():
     lat, long = get_coords(session['location'])
-    print(lat,long)
     weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={long}&appid={openweather_API_key}"
     response = requests.get(weather_url)
     print(response.json())
