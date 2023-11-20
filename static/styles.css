@@ -1,0 +1,47 @@
+.user_chat {
+    width: 250px;
+    margin: 8px 0px;
+    padding:5px 8px;
+    border-radius: 25px;
+    background-color: rgb(235,235,235);
+    align-self: flex-end;
+}
+.bot_chat {
+    margin: 8px 0px;
+    width: 250px;
+    padding:5px 8px;
+    border-radius: 25px;
+    background-color: rgb(209,237,242);
+}
+.bot_chat.first {
+    margin-bottom: 0px;
+}
+.bot_chat.second {
+    margin-top: 8px;
+}
+
+#conversation {
+    display: flex;
+    flex-direction:column;
+    width:600px;
+    min-height:500px;
+    border: 2px solid black;
+    border-radius: 10px
+}
+
+
+
+.outer_box {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 2px solid black;
+    font-family: Arial;
+}
+
+.company_name {
+    color: blue;
+    align-self: flex-start;
+    margin-left: 50px;
+    font-style: italic;
+}

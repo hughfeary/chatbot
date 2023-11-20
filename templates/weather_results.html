@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}ChatBot{% endblock %}
+
+{% block content %}
+<body>
+    <h1>Go Travel! Chatbot - Weather results</h1>
+    <div id="conversation">
+        <p class="bot_chat first">Hi There! I am a chatbot designed to help you!</p>
+        <p class="bot_chat second">Type 'help' to find out what I can do!</p>
+        {% for line in session['conversation'] %}
+            {% if session['conversation'].index(line)%2==0 %}
+                <p class="user_chat">{{ line }}</p>
+            {% else %}
+                <p class="bot_chat">{{ line }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <form id="chat_form" method="post">
+        <input type="text" name="user_input" required />
+        <button type="submit">Send</button>
+    </form>
+    <form action="{{ url_for('reset_chat') }}" id="reset_chat" method="post">
+        <button type="submit">Reset chat</button>
+    </form>
+
+</body>
+{% endblock %}
+{% block weather %}
+    <h1>this is a test</h1>
+    {{ '%.1f'|format(result['main']['temp']-273.15) }} &deg;
+    {{ result['weather'][0]['main'] }}
+
+{% endblock %}
+

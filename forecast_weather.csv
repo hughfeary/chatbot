@@ -1,0 +1,10 @@
+question,answer
+test value,Sure I'll get weather for you now.
+get the weather for bristol, No problem I will retrieve that data now
+help,Type 'weather' to get weather data
+weather,Sure. How many locations would you like to see the weather for (up to 5)?
+can i see the weather,How many locations would you like to see the weather for (up to 5)?
+weather please,How many locations would you like to see the weather for (up to 5)?
+forecast,Let me get that data for you.
+current,Let me get that data for you.
+completely unrelated test prompt, ok ill get the weather for you now
