@@ -44,11 +44,64 @@
     border-radius: 10px
 }
 
+th {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width:122px;
+}
+
 td {
-    border: 1px solid black
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    min-width:122px;
+}
+
+tr {
+    display:flex;
+    flex-direction:row;
+    justify-content:center
 }
 
 .location_current_stats {
-    width: 400px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    min-width: 750px;
+    border:1px solid black;
+    background-color: rgb(240,250,250)
+}
+
+#temp_descrip{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content: center;
+}
+
+.skinny_p {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.skinny_p.header {
+    font-weight: bold;
+}
+
+.skinny_p.temp {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.center_block {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+table {
+    min-width:750px;
+    border: 1px solid black
 }
 

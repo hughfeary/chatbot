@@ -38,8 +38,11 @@ def format_description(string):
     return string[0].upper() + string[1::]
 
 
-def convert_dt(unix):
-    return datetime.utcfromtimestamp(unix).strftime('%a %e %b')
+def convert_dt(unix, loc="t"):
+    if loc == "header":
+        return datetime.utcfromtimestamp(unix).strftime('%a %e %b, %I:%M%p')
+    else:
+        return datetime.utcfromtimestamp(unix).strftime('%a %e %b')
 
 my_bot = ChatBot(
     name="PyBot",
@@ -76,7 +79,6 @@ def index():
             session['location'] = []
             location_input = user_input.split(",")
             trimmed_locations = [item.strip().title() for item in location_input]
-            print(trimmed_locations)
             for loc in trimmed_locations:
                 if loc not in itinerary_destinations:
                     print('entering error if block')

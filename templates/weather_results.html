@@ -26,15 +26,23 @@
 </body>
 {% endblock %}
 {% block weather %}
-    <h1>this is a test</h1>
+    <h1>Weather results</h1>
 
 {% for key in data_dict %}
 <div class="location_current_stats">
-    <h2>{{ key }}</h2>
-    <p>{{ convert_dt(data_dict[key]['current']['dt']) }}</p>
-    <div>{{ '%.1f'|format(data_dict[key]['current']['temp']-273.15) }} &deg;</div>
-    <div>{{ data_dict[key]['current']['weather'][0]['main'] }}</div>
+    <h2 class="center_block">{{ key }}</h2>
+    <p class="center_block">{{ convert_dt(data_dict[key]['current']['dt'],loc="header") }}</p>
+    <div id="temp_descrip">
+        <p class="skinny_p header">Currently:</p>
+        <p class="skinny_p temp">{{ '%.1f'|format(data_dict[key]['current']['temp']-273.15) }} &deg;</p>
+        <p class="skinny_p">{{ data_dict[key]['current']['weather'][0]['main'] }}</p>
+    </div>
+    <div>
+        <p>Max: {{ '%.1f'|format(data_dict[key]['daily'][0]['temp']['max']-273.15) }}&deg;</p>
+        <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][0]['temp']['min']-273.15) }}&deg;</p>
+    </div>
 </div>
+<h3>Next 7 days:</h3>
 <table>
     <tr>
         <th>{{ convert_dt(data_dict[key]['daily'][1]['dt']) }}</th>
@@ -48,42 +56,43 @@
     <tr>
 <!--        this can definitely be formatted. pass function into template to reduce code repetition. maybe code to write the below blocks out, more maintainable-->
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['min']-273.15) }}&deg;</p>
+            <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['min']-273.15) }}&deg;</p>
+            <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['max']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][1]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][2]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][2]['temp']['min']-273.15) }}&deg;</p>
+            <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][2]['temp']['min']-273.15) }}&deg;</p>
+            <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][2]['temp']['max']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][2]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][3]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][3]['temp']['min']-273.15) }}&deg;</p>
+            <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][3]['temp']['min']-273.15) }}&deg;</p>
+            <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][3]['temp']['max']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][3]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][4]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][4]['temp']['min']-273.15) }}&deg;</p>
+            <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][4]['temp']['min']-273.15) }}&deg;</p>
+            <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][4]['temp']['max']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][4]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][5]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][5]['temp']['min']-273.15) }}&deg;</p>
+            <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][5]['temp']['min']-273.15) }}&deg;</p>
+            <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][5]['temp']['max']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][5]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][6]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][6]['temp']['min']-273.15) }}&deg;</p>
+            <p>Max: {{ '%.1f'|format(data_dict[key]['daily'][6]['temp']['max']-273.15) }}&deg;</p>
+            <p class="skinny_p">Min: {{ '%.1f'|format(data_dict[key]['daily'][6]['temp']['min']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][6]['weather'][0]['description']) }}</p>
         </td>
         <td>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][7]['temp']['max']-273.15) }}&deg;</p>
-            <p>{{ '%.1f'|format(data_dict[key]['daily'][7]['temp']['min']-273.15) }}&deg;</p>
+            <p>Max: {{ '%.1f'|format(data_dict[key]['daily'][7]['temp']['max']-273.15) }}&deg;</p>
+            <p class="skinny_p">Min: {{ '%.1f'|format(data_dict[key]['daily'][7]['temp']['min']-273.15) }}&deg;</p>
             <p>{{ format_description(data_dict[key]['daily'][7]['weather'][0]['description']) }}</p>
         </td>
     </tr>
 </table>
+<div style="height:35px;"></div>
 {% endfor %}
 {% endblock %}
 
