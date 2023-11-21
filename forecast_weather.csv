@@ -3,9 +3,9 @@ help,Type 'weather' to get weather data
 get the weather for bristol,No problem I will retrieve that data now
 weather,Sure. Which locations would you like to check the weather? (hint: separate each location with a comma)
 can i get the weather,Sure. Which locations would you like to check the weather? Hint: separate each location with a comma
-user entered locations,Got it. Would you like current weather or 5-day forecast?
+user entered locations,Got it. I'll display the weather for you down below.
 location invalid,Oops. It looks like a location is not from the itinerary. Try again and make sure to separate each with a comma
-current,Sure. I will display the information down below
+current,Sure. I will display the weather down below
 itinerary,The trip includes blah blah blah and blah
 can i see the weather,How many locations would you like to see the weather for (up to 5)?
 forecast,Let me get that data for you.

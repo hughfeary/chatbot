@@ -3,6 +3,7 @@ from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer, ChatterBotCorpusTrainer
 import pandas as pd
 import requests
+from datetime import datetime
 
 file = open('API_keys.txt', 'r')
 read = file.readlines()
@@ -31,6 +32,14 @@ itinerary_destinations = {
 
 def get_coords(location):
     return itinerary_destinations[location]["latitude"], itinerary_destinations[location]["longitude"]
+
+
+def format_description(string):
+    return string[0].upper() + string[1::]
+
+
+def convert_dt(unix):
+    return datetime.utcfromtimestamp(unix).strftime('%a %e %b')
 
 my_bot = ChatBot(
     name="PyBot",
@@ -64,7 +73,7 @@ def index():
         bot_response = my_bot.get_response(user_input).text
 
         if len(session['conversation']) >= 1 and session['conversation'][-1][-5:-1] == "comm":
-            session['location'] = {}
+            session['location'] = []
             location_input = user_input.split(",")
             trimmed_locations = [item.strip().title() for item in location_input]
             print(trimmed_locations)
@@ -75,35 +84,40 @@ def index():
                     break
                 else:
                 #gives feedback to user if a location is incorrect
-                    for i, item in enumerate(trimmed_locations):
-                        session['location'][str(index)] = [item]
+                    for final_loc in trimmed_locations:
+                        session['location'].extend([final_loc])
                     bot_response = my_bot.get_response("user entered locations").text
                     # done to ensure a response no matter the input
-
-        # if bot_response == 'No problem I will retrieve that data now':
-        #     session['location'] = 'Bristol'
-        #     session['conversation'].extend([user_input, bot_response])
-        #     session['conversation'] = session['conversation']
-        #     return redirect(url_for('display_weather'))
+                    session['conversation'].extend([user_input, bot_response])
+                    session['conversation'] = session['conversation']
+                    #could this be a function to reduce code?
+                    return redirect(url_for('display_weather'))
 
         session['conversation'].extend([user_input, bot_response])
         session['conversation'] = session['conversation']
         return render_template('index.html')
+
     return render_template('index.html')
 
 @app.route('/get_weather',methods=['get','post'])
 def display_weather():
-    lat, long = get_coords(session['location'])
-    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={long}&appid={openweather_API_key}"
-    response = requests.get(weather_url)
-    print(response.json())
-    return render_template('weather_results.html', result=response.json())
+    print(session['location'][0])
+    data_dict = {}
+    part = "minutely,hourly"
+
+    for location in session['location']:
+        lat, long = get_coords(location)
+        weather_url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={long}&exclude={part}&appid={openweather_API_key}"
+        response = requests.get(weather_url)
+        data_dict[location] = response.json()
+    return render_template('weather_results.html', data_dict=data_dict, format_description=format_description, convert_dt=convert_dt)
 
 
 @app.route('/reset',methods=['post']) #route that handles the reset request
 def reset_chat():
     session['conversation'] = []
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run()

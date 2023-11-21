@@ -1,3 +1,18 @@
+.outer_box {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 2px solid black;
+    font-family: Arial;
+}
+
+.company_name {
+    color: blue;
+    align-self: flex-start;
+    margin-left: 50px;
+    font-style: italic;
+}
+
 .user_chat {
     width: 250px;
     margin: 8px 0px;
@@ -29,19 +44,11 @@
     border-radius: 10px
 }
 
-
-
-.outer_box {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    border: 2px solid black;
-    font-family: Arial;
+td {
+    border: 1px solid black
 }
 
-.company_name {
-    color: blue;
-    align-self: flex-start;
-    margin-left: 50px;
-    font-style: italic;
+.location_current_stats {
+    width: 400px;
 }
+
