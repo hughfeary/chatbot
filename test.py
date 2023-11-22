@@ -103,7 +103,6 @@ def index():
 
 @app.route('/get_weather',methods=['get','post'])
 def display_weather():
-    print(session['location'][0])
     data_dict = {}
     part = "minutely,hourly"
 
