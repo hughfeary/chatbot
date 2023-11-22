@@ -1,3 +1,6 @@
 ChatterBot==1.0.5
 ChatterBot_corpus
 flask
+pandas
+requests
+datetime
