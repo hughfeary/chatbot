@@ -4,6 +4,9 @@ from chatterbot.trainers import ListTrainer, ChatterBotCorpusTrainer
 import pandas as pd
 import requests
 from datetime import datetime
+#importing itinerary desitations and lists stored separately to avoid clutter in main code
+from bot_trainer import itinerary_destinations, itinerary_trainer, help_trainer
+
 
 file = open('API_keys.txt', 'r')
 read = file.readlines()
@@ -15,19 +18,6 @@ app.secret_key="12345"
 app.secret_key = API_dict['flask_secret_key']
 openweather_API_key = API_dict['openweather_API_key']
 google_API_key = API_dict['google_API_key']
-
-itinerary_destinations = {
-        'Lake District National Park': {'latitude': 54.4609, 'longitude': -3.0886},
-        'Corfe Castle': {'latitude': 50.6395, 'longitude': -2.0566},
-        'The Cotswolds': {'latitude': 51.8330, 'longitude': -1.8433},
-        'Cambridge': {'latitude': 52.2053, 'longitude': 0.1218},
-        'Bristol': {'latitude': 51.4545, 'longitude': -2.5879},
-        'Oxford': {'latitude': 51.7520, 'longitude': -1.257},
-        'Norwich': {'latitude': 52.6309, 'longitude': 1.2974},
-        'Stonehenge': {'latitude': 51.1789, 'longitude': -1.8262},
-        'Watergate Bay': {'latitude': 50.4429, 'longitude': -5.0553},
-        'Birmingham': {'latitude': 52.4862, 'longitude': -1.8904}
-    }
 
 
 def get_coords(location):
@@ -51,19 +41,19 @@ my_bot = ChatBot(
                     "chatterbot.logic.BestMatch"]
     )
 
+#training block
 weather_dialog = pd.read_csv('forecast_weather.csv')
 # make csv file a flat list to be taken by the list trainer
 q_list = weather_dialog[['question', 'answer']].values.flatten().tolist()
-list_trainer = ListTrainer(my_bot)
-list_trainer.train(q_list)
+#help logic?
 
-#this needs to be multiple things long otherwise it will incorrectly train
-# for item in (q_list):
-#     list_trainer.train(item)
+
+list_trainer = ListTrainer(my_bot)
+for item in (q_list, itinerary_trainer, help_trainer):
+    list_trainer.train(item)
 
 corpus_trainer = ChatterBotCorpusTrainer(my_bot)
 corpus_trainer.train('chatterbot.corpus.english')
-
 
 
 @app.route('/', methods=["POST","GET"])
@@ -111,6 +101,7 @@ def display_weather():
         weather_url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={long}&exclude={part}&appid={openweather_API_key}"
         response = requests.get(weather_url)
         data_dict[location] = response.json()
+        #logic for one place and match to advise.
     return render_template('weather_results.html', data_dict=data_dict, format_description=format_description, convert_dt=convert_dt)
 
 
