@@ -5,7 +5,8 @@ import pandas as pd
 import requests
 from datetime import datetime
 #importing itinerary desitations and lists stored separately to avoid clutter in main code
-from bot_trainer import itinerary_destinations, itinerary_trainer, help_trainer
+from bot_trainer import itinerary_trainer, help_trainer
+from data import itinerary_destinations, weather_advice
 
 
 file = open('API_keys.txt', 'r')
@@ -44,17 +45,16 @@ my_bot = ChatBot(
 #training block
 weather_dialog = pd.read_csv('forecast_weather.csv')
 # make csv file a flat list to be taken by the list trainer
-q_list = weather_dialog[['question', 'answer']].values.flatten().tolist()
+weather_trainer = weather_dialog[['question', 'answer']].values.flatten().tolist()
 #help logic?
 
 
 list_trainer = ListTrainer(my_bot)
-for item in (q_list, itinerary_trainer, help_trainer):
+for item in (weather_trainer, itinerary_trainer, help_trainer):
     list_trainer.train(item)
 
 corpus_trainer = ChatterBotCorpusTrainer(my_bot)
 corpus_trainer.train('chatterbot.corpus.english')
-
 
 @app.route('/', methods=["POST","GET"])
 def index():
@@ -66,6 +66,12 @@ def index():
         bot_response = my_bot.get_response(user_input).text
 
         if len(session['conversation']) >= 1 and session['conversation'][-1][-5:-1] == "comm":
+            if user_input == "itinerary": #show the itinerary to the user and break out of location loop
+                bot_response = my_bot.get_response("itinerary").text
+                session['conversation'].extend([user_input, bot_response])
+                session['conversation'] = session['conversation']
+                return render_template('index.html')
+
             session['location'] = []
             location_input = user_input.split(",")
             trimmed_locations = [item.strip().title() for item in location_input]
@@ -75,13 +81,11 @@ def index():
                     bot_response = my_bot.get_response("location invalid").text
                     break
                 else:
-                #gives feedback to user if a location is incorrect
+                #gives feedback to user if a location is incorrect but gets stuck in loop
                     for final_loc in trimmed_locations:
                         session['location'].extend([final_loc])
-                    bot_response = my_bot.get_response("user entered locations").text
-                    # done to ensure a response no matter the input
-                    session['conversation'].extend([user_input, bot_response])
-                    session['conversation'] = session['conversation']
+                    session['conversation'].extend([user_input])
+                    
                     #could this be a function to reduce code?
                     return redirect(url_for('display_weather'))
 
@@ -96,11 +100,27 @@ def display_weather():
     data_dict = {}
     part = "minutely,hourly"
 
+    if request.method == 'POST':
+        user_input = request.form.get('user_input')
+        bot_response = my_bot.get_response(user_input).text
+        #if bot response is sure..enter weather ect
+        #dont save that, but instead feed a prompt in that tells user to refresh chat to enter new instance
+        session['conversation'].extend([user_input, bot_response])
+        session['conversation'] = session['conversation']
+        return render_template('weather_results.html')
+
     for location in session['location']:
         lat, long = get_coords(location)
         weather_url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={long}&exclude={part}&appid={openweather_API_key}"
         response = requests.get(weather_url)
         data_dict[location] = response.json()
+    
+    condition = data_dict[session['location'][0]]['current']['weather'][0]['main']
+    dict = weather_advice(session['location'][0])
+    bot_response = my_bot.get_response("user entered locations").text + f' {dict[condition]}'
+    session['conversation'].extend([bot_response])
+    session['conversation'] = session['conversation']
+
         #logic for one place and match to advise.
     return render_template('weather_results.html', data_dict=data_dict, format_description=format_description, convert_dt=convert_dt)
 
