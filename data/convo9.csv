@@ -1,0 +1,4 @@
+question,answer
+who are you?,I am a ChatBot that is designed to display the weather for locations from the traveller's itinerary! Would you like to see the weather?
+ok, Sure. Type the locations you want the weather for or type 'itinerary' to see valid locations. Separate each location with a comma
+user entered locations,Got it. I'll display the weather for you down below.

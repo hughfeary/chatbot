@@ -1,0 +1,5 @@
+question,answer
+what can you do?,I can display the weather for locations from the traveller's itinerary! Would you like to see the weather?
+No, Okay. Let me know if you ever want to see the itinerary or weather information.
+show me the weather, Sure. Type the locations you want the weather for or type 'itinerary' to see valid locations. Separate each location with a comma
+user entered locations,Got it. I'll display the weather for you down below.

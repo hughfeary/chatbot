@@ -4,10 +4,11 @@ from chatterbot.trainers import ListTrainer, ChatterBotCorpusTrainer
 import pandas as pd
 import requests
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+import os
 #importing itinerary desitations and lists stored separately to avoid clutter in main code
 from bot_trainer import itinerary_trainer, help_trainer
 from data import itinerary_destinations, weather_advice
-
 
 file = open('API_keys.txt', 'r')
 read = file.readlines()
@@ -20,6 +21,25 @@ app.secret_key = API_dict['flask_secret_key']
 openweather_API_key = API_dict['openweather_API_key']
 google_API_key = API_dict['google_API_key']
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trainer_conversations.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String, nullable=False) 
+    answer = db.Column(db.String, nullable=False)
+
+def import_data():
+    data_folder = 'data'
+    for filename in os.listdir(data_folder):
+        if filename.endswith('.csv'):
+            file_path = os.path.join(data_folder, filename)
+            df = pd.read_csv(file_path)
+            for _, row in df.iterrows():
+                conversation = Conversation(question=row['question'], answer=row['answer'])
+                db.session.add(conversation)
+    db.session.commit()
 
 def get_coords(location):
     return itinerary_destinations[location]["latitude"], itinerary_destinations[location]["longitude"]
@@ -38,26 +58,23 @@ def convert_dt(unix, loc="t"):
 my_bot = ChatBot(
     name="PyBot",
     read_only=True,
+    storage_adapter = 'chatterbot.storage.SQLStorageAdapter', database_uri='sqlite:///trainer_conversations.db',
     logic_adapters=["chatterbot.logic.MathematicalEvaluation",
                     "chatterbot.logic.BestMatch"]
     )
 
-#training block
-weather_dialog = pd.read_csv('forecast_weather.csv')
-# make csv file a flat list to be taken by the list trainer
-weather_trainer = weather_dialog[['question', 'answer']].values.flatten().tolist()
-#help logic?
-
-
 list_trainer = ListTrainer(my_bot)
-for item in (weather_trainer, itinerary_trainer, help_trainer):
+for item in (itinerary_trainer, help_trainer):
     list_trainer.train(item)
 
-corpus_trainer = ChatterBotCorpusTrainer(my_bot)
-corpus_trainer.train('chatterbot.corpus.english')
+for conversation in Conversation.query.all():
+    list_trainer.train([
+        conversation.question,
+        conversation.answer
+    ])
 
 @app.route('/', methods=["POST","GET"])
-def index():
+def chat_window():
     if 'conversation' not in session:
         session['conversation'] = []
 
@@ -70,30 +87,30 @@ def index():
                 bot_response = my_bot.get_response("itinerary").text
                 session['conversation'].extend([user_input, bot_response])
                 session['conversation'] = session['conversation']
-                return render_template('index.html')
+                return render_template('chat_window.html')
 
             session['location'] = []
             location_input = user_input.split(",")
             trimmed_locations = [item.strip().title() for item in location_input]
+            print(trimmed_locations)
             for loc in trimmed_locations:
                 if loc not in itinerary_destinations:
                     print('entering error if block')
                     bot_response = my_bot.get_response("location invalid").text
                     break
-                else:
-                #gives feedback to user if a location is incorrect but gets stuck in loop
+                elif trimmed_locations[-1]==loc:
                     for final_loc in trimmed_locations:
                         session['location'].extend([final_loc])
+                    
                     session['conversation'].extend([user_input])
                     
-                    #could this be a function to reduce code?
                     return redirect(url_for('display_weather'))
 
         session['conversation'].extend([user_input, bot_response])
         session['conversation'] = session['conversation']
-        return render_template('index.html')
+        return render_template('chat_window.html')
 
-    return render_template('index.html')
+    return render_template('chat_window.html')
 
 @app.route('/get_weather',methods=['get','post'])
 def display_weather():
@@ -128,8 +145,11 @@ def display_weather():
 @app.route('/reset',methods=['post']) #route that handles the reset request
 def reset_chat():
     session['conversation'] = []
-    return redirect(url_for('index'))
+    return redirect(url_for('chat_window'))
 
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+        import_data()
     app.run()

@@ -1,0 +1,3 @@
+question,answer
+user entered locations,Got it. I'll display the weather for you down below.
+location invalid,Oops. It looks like a location is not from the itinerary. Type 'itinerary' to view locations or try again making sure to separate each with a comma

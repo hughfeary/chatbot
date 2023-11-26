@@ -1,8 +1,0 @@
-question,answer
-can i get the weather,Sure. Which locations from the itinerary would you like to check the weather? Separate each location with a comma
-weather please,Sure. Which locations from the itinerary would you like to check the weather? Separate each location with a comma
-weather,Sure. Which locations from the itinerary would you like to check the weather? Separate each location with a comma
-whats the weather?,Sure. Which locations from the itinerary would you like to check the weather? Separate each location with a comma
-show me the weather,Sure. Which locations from the itinerary would you like to check the weather? Separate each location with a comma
-user entered locations,Got it. I'll display the weather for you down below.
-location invalid,Oops. It looks like a location is not from the itinerary. Type 'itinerary' to view locations or try again making sure to separate each with a comma

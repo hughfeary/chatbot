@@ -1,4 +1,7 @@
 from data import itinerary_destinations
+import pandas as pd
+
+
 
 itinerary_string = ', '.join(itinerary_destinations.keys())
 itinerary_response = f'This action packed trip includes the following itinerary: {itinerary_string}'
@@ -11,6 +14,8 @@ itinerary_trainer = ['itinerary',
     'what is the itinerary',
     itinerary_response,
     'which locations are you going to?',
+    itinerary_response,
+    'where is the trip?',
     itinerary_response
     ]
 
