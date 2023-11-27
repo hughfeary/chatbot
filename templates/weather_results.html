@@ -54,7 +54,6 @@
         <th>{{ convert_dt(data_dict[key]['daily'][7]['dt']) }}</th>
     </tr>
     <tr>
-<!--        this can definitely be formatted. pass function into template to reduce code repetition. maybe code to write the below blocks out, more maintainable-->
         <td>
             <p>Min: {{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['min']-273.15) }}&deg;</p>
             <p class="skinny_p">Max: {{ '%.1f'|format(data_dict[key]['daily'][1]['temp']['max']-273.15) }}&deg;</p>
