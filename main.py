@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 import os
+
 from bot_trainer import itinerary_trainer, help_trainer
 from data import itinerary_destinations, weather_advice
 
@@ -24,11 +25,6 @@ openweather_API_key = API_dict['openweather_API_key']
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trainer_conversations.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app) #linking flask app and SQLAlchemy
-
-# class to define structure of the database table
-
-
-#class to encapsulate location information, weather data and handle some data processing
 
 # read all of the csv files and add data to conversation table
 def import_data():
@@ -57,6 +53,7 @@ def convert_dt(unix, loc="t"):
     else:
         return datetime.utcfromtimestamp(unix).strftime('%a %e %b')
 
+#class to encapsulate location information, weather data and handle weather data processing
 class Location:
     def __init__(self, location): # initialise class with name and coordinates
         self.location = location
@@ -95,7 +92,7 @@ class Location:
         if self.weather_data:
             return convert_dt(self.weather_data['daily'][day]['dt'])
 
-
+# class to define structure of the database table
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String, nullable=False) 

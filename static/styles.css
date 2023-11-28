@@ -105,3 +105,27 @@ table {
     border: 1px solid black
 }
 
+#reset_chat button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    background-color: rgb(255,208,198);
+    font-weight: bold;
+    width: 85px;
+    height: 22px;
+}
+
+#chat_form input{
+    margin-top: 3px;
+    width: 300px;
+    height: 25px;
+    background-color: rgb(255,252,252);
+    border-radius: 5px;
+}
+
+#chat_form button {
+    height: 30px;
+    width: 60px;
+    border-radius:10px;
+    background-color: rgb(255,241,238);
+}
