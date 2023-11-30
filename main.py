@@ -26,6 +26,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trainer_conversations.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app) #linking flask app and SQLAlchemy
 
+# class to define structure of the database table
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String, nullable=False) 
+    answer = db.Column(db.String, nullable=False)
+
+db.create_all()
+
 # read all of the csv files and add data to conversation table
 def import_data():
     data_folder = 'data'
@@ -38,6 +46,7 @@ def import_data():
                 db.session.add(conversation)
     db.session.commit()
 
+import_data()
 
 def get_coords(location):
     return itinerary_destinations[location]["latitude"], itinerary_destinations[location]["longitude"]
@@ -91,12 +100,6 @@ class Location:
     def get_dt(self,day):# retrieve date/time depending on requested day
         if self.weather_data:
             return convert_dt(self.weather_data['daily'][day]['dt'])
-
-# class to define structure of the database table
-class Conversation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String, nullable=False) 
-    answer = db.Column(db.String, nullable=False)
 
 # initialisation of chatbot
 my_bot = ChatBot(
@@ -211,7 +214,4 @@ def reset_chat():
 
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        import_data()
     app.run()
