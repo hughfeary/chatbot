@@ -194,8 +194,10 @@ def display_weather():
 
         weather_advice_list = []
         for obj in location_obj_list:
-            # get weather advice from dictionary for each requested location
-            weather_advice_list.append(weather_advice(obj.location)[obj.current_weather_description])
+            advice_dict = weather_advice(obj.location)
+            if obj.current_weather_description in advice_dict: #error handling around weather conditions
+                # get weather advice from dictionary for each requested location
+                weather_advice_list.append(advice_dict[obj.current_weather_description])
         bot_response = my_bot.get_response("user entered locations").text + f' {" ".join(weather_advice_list)}'
         session['conversation'].extend([bot_response])
         session['conversation'] = session['conversation']
